@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>BMI Calculator</title>
+    <style>
+        body { font-family: sans-serif; max-width: 600px; margin: 40px auto; padding: 0 20px; }
+        input { display: block; margin: 8px 0; padding: 8px; width: 100%; }
+        button { padding: 10px 20px; background: #007bff; color: white; border: none; cursor: pointer; margin-top: 8px; }
+        .result { background: #f0f8ff; padding: 16px; margin: 20px 0; border-left: 4px solid #007bff; }
+        .error { color: red; }
+        .history { background: #f9f9f9; padding: 12px; margin-top: 8px; border-radius: 4px; }
+        .Underweight { color: orange; }
+        .Normal { color: green; }
+        .Overweight { color: darkorange; }
+        .Obese { color: red; }
+    </style>
+</head>
+<body>
+
+    <h1>BMI Calculator</h1>
+
+    <form method="POST">
+        {% csrf_token %}
+        <label>Your Name</label>
+        <input type="text" name="name" placeholder="Enter your name" required>
+
+        <label>Weight (kg)</label>
+        <input type="number" name="weight" placeholder="e.g. 70" step="0.1" required>
+
+        <label>Height (cm)</label>
+        <input type="number" name="height" placeholder="e.g. 175" step="0.1" required>
+
+        <button type="submit">Calculate BMI</button>
+    </form>
+
+    {% if error %}
+        <p class="error">{{ error }}</p>
+    {% endif %}
+
+    {% if result %}
+        <div class="result">
+            <h2>Your BMI: {{ result }}</h2>
+            <h3 class="{{ category }}">Category: {{ category }}</h3>
+            <p>
+                Underweight: below 18.5 &nbsp;|&nbsp;
+                Normal: 18.5 – 24.9 &nbsp;|&nbsp;
+                Overweight: 25 – 29.9 &nbsp;|&nbsp;
+                Obese: 30 and above
+            </p>
+        </div>
+    {% endif %}
+
+    <h3>Last 5 Records</h3>
+    {% for record in history %}
+        <div class="history">
+            <strong>{{ record.name }}</strong> —
+            BMI: {{ record.bmi }} —
+            <span class="{{ record.category }}">{{ record.category }}</span> —
+            {{ record.created_at|date:"d M Y, H:i" }}
+        </div>
+    {% empty %}
+        <p>No records yet.</p>
+    {% endfor %}
+
+</body>
+</html>
